@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
-import { useAuthToken } from "./turnify/useAuthToken";
-import { Main } from "./turnify/Main";
+import { useAuthToken } from "../../turnify/hooks/useAuthToken";
+import { Main } from "../../turnify/components/Main";
 
 function App() {
   const { accessToken } = useAuthToken();
