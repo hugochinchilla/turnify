@@ -4,13 +4,13 @@ import { useSpotifyAuthentication } from "./useSpotifyAuthentication";
 import { Player } from "./Player";
 
 function App() {
-  console.log("App");
-  useSpotifyAuthentication();
+  const { accessToken } = useSpotifyAuthentication();
 
   return (
     <div className="App">
-      <header className="App-header"></header>
-      <Player />
+      <header className="App-header">
+        {accessToken && <Player token={accessToken} />}
+      </header>
     </div>
   );
 }

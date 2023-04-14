@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import { useState } from "react";
 
 const clientId = "fd160f950e30436ebf69e14b9550cd0b";
 const redirectUri = "http://127.0.0.1:7878";
@@ -28,7 +29,7 @@ function doLogin() {
 
   generateCodeChallenge(codeVerifier).then((codeChallenge) => {
     let state = generateRandomString(16);
-    let scope = "user-read-private user-read-email";
+    let scope = "user-read-private user-read-email streaming";
 
     let args = new URLSearchParams({
       response_type: "code",
@@ -40,15 +41,14 @@ function doLogin() {
       code_challenge: codeChallenge,
     });
 
-    console.log("Redirecting");
     window.location.assign("https://accounts.spotify.com/authorize?" + args);
   });
 }
 
-function getAccessToken() {
+function getAccessToken(): Promise<string> {
   const storedAccessToken = localStorage.getItem("access-token");
   if (storedAccessToken) {
-    return storedAccessToken;
+    return Promise.resolve(storedAccessToken);
   }
 
   const codeVerifier = localStorage.getItem("code-verifier") as string;
@@ -78,30 +78,29 @@ function getAccessToken() {
     })
     .then((data) => {
       localStorage.setItem("access-token", data.access_token);
+      return data.access_token;
     })
     .catch((error) => {
       console.error("Error:", error);
     });
 }
 
-async function getProfile() {
-  let accessToken = getAccessToken();
-
-  const response = await fetch("https://api.spotify.com/v1/me", {
+function getProfile(accessToken: string) {
+  return fetch("https://api.spotify.com/v1/me", {
     headers: {
       Authorization: "Bearer " + accessToken,
     },
+  }).then((response) => {
+    return response.json();
   });
-
-  return response.json();
 }
 
-export async function useSpotifyAuthentication() {
-  console.log("Called custom hook");
+export function useSpotifyAuthentication() {
+  const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+  const [profile, setProfile] = useState<string | undefined>(undefined);
 
   if (window.location.origin !== redirectUri) {
     window.location.assign(redirectUri);
-    return;
   }
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -110,6 +109,14 @@ export async function useSpotifyAuthentication() {
   if (!code) {
     doLogin();
   } else {
-    await getProfile();
+    getAccessToken().then((token) => {
+      setAccessToken(token);
+      //getProfile(token);
+    });
   }
+
+  return {
+    accessToken,
+    //profile,
+  };
 }
