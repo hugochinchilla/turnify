@@ -21,10 +21,24 @@ function getCodeVerifier(): string {
   return codeVerifier;
 }
 
-function getAccessToken(code: string, codeVerifier: string): Promise<string> {
+function getAccessToken(
+  code: string,
+  codeVerifier: string
+): Promise<undefined | string> {
   const storedAccessToken = localStorage.getItem("access-token");
   if (storedAccessToken) {
-    return Promise.resolve(storedAccessToken);
+    return spotifyAuth
+      .getProfile(storedAccessToken)
+      .then(() => {
+        return storedAccessToken;
+      })
+      .catch((errorResponse) => {
+        if (errorResponse.response.status === 401) {
+          localStorage.removeItem("access-token");
+          spotifyAuth.redirectToLoginPage(codeVerifier);
+          return undefined;
+        }
+      });
   }
 
   return spotifyAuth.requestAccessToken(codeVerifier, code).then((response) => {
@@ -47,11 +61,7 @@ export function useAuthToken() {
     spotifyAuth.redirectToLoginPage(codeVerifier);
   } else {
     getAccessToken(code, codeVerifier)
-      .then((token) => {
-        spotifyAuth.getProfile(token).then((profile) => {
-          setAccessToken(token);
-        });
-      })
+      .then(setAccessToken)
       .catch((errorResponse) => {
         errorResponse.response.json().then((response: any) => {
           if (response.error === "invalid_grant") {
