@@ -1,16 +1,14 @@
 import React from "react";
 import "./App.css";
-import { useSpotifyAuthentication } from "./useSpotifyAuthentication";
-import { Player } from "./Player";
+import { useAuthToken } from "./turnify/useAuthToken";
+import { Main } from "./turnify/Main";
 
 function App() {
-  const { accessToken } = useSpotifyAuthentication();
+  const { accessToken } = useAuthToken();
 
   return (
     <div className="App">
-      <header className="App-header">
-        {accessToken && <Player token={accessToken} />}
-      </header>
+      {accessToken && <Main token={accessToken} />}
     </div>
   );
 }

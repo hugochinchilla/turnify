@@ -80,24 +80,10 @@ function getAccessToken(): Promise<string> {
       localStorage.setItem("access-token", data.access_token);
       return data.access_token;
     })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
 }
 
-function getProfile(accessToken: string) {
-  return fetch("https://api.spotify.com/v1/me", {
-    headers: {
-      Authorization: "Bearer " + accessToken,
-    },
-  }).then((response) => {
-    return response.json();
-  });
-}
-
-export function useSpotifyAuthentication() {
+export function useAuthToken() {
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
-  const [profile, setProfile] = useState<string | undefined>(undefined);
 
   if (window.location.origin !== redirectUri) {
     window.location.assign(redirectUri);
@@ -111,12 +97,10 @@ export function useSpotifyAuthentication() {
   } else {
     getAccessToken().then((token) => {
       setAccessToken(token);
-      //getProfile(token);
     });
   }
 
   return {
     accessToken,
-    //profile,
   };
 }
