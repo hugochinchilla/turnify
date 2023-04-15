@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import { ErrorResponse } from "../http/ErrorResponse";
 
 function generateRandomString(length: number) {
   let text = "";
@@ -34,15 +35,6 @@ function fetchAsFormEncoded(url: string, data: Record<string, string>) {
     }
     return response.json();
   });
-}
-
-class ErrorResponse extends Error {
-  readonly response: Response;
-
-  constructor(message: string, response: Response) {
-    super(message);
-    this.response = response;
-  }
 }
 
 export class SpotifyAuthRepository {

@@ -1,17 +1,7 @@
 import React from "react";
-import {usePlaybackState, WebPlaybackSDK,} from "react-spotify-web-playback-sdk";
-import {PlayerControls} from './PlayerControls';
-
-
-const SongTitle = ()=> {
-  const playbackState = usePlaybackState();
-
-  if (playbackState === null) {
-    return <p>no song</p>;
-  }
-
-  return <p>Current song: {playbackState.track_window.current_track.name}</p>;
-};
+import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
+import { PlayerControls } from "./PlayerControls";
+import { Search } from "./Search";
 
 interface MainProps {
   token: string;
@@ -26,7 +16,7 @@ function Main({ token }: MainProps) {
         getOAuthToken={(callback) => callback(token)}
         initialVolume={0.5}
       >
-        <SongTitle />
+        <Search token={token} />
         <PlayerControls />
       </WebPlaybackSDK>
     </div>
