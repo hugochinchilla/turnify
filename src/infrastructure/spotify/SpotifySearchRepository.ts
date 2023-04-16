@@ -9,6 +9,7 @@ export interface SearchResult {
   title: string;
   artwork: string;
   type: ResultType;
+  uri: string;
 }
 
 export class SpotifySearchRepository {
@@ -43,6 +44,7 @@ export class SpotifySearchRepository {
           title: item.name,
           artwork: item.images[1].url,
           type: ResultType.ALBUM,
+          uri: item.uri,
         }));
       });
   }
