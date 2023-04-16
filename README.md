@@ -16,7 +16,24 @@ You will have to select an album and listen as an LP, this means:
 
 ## Project status
 
-This is in a very basic state, only a very incomplete authentication system has been implemented.
+This is in a very basic state, you will be able to search albums and play them, but this is a still in progress application.
+
+* [x] Search albums
+* [x] Start playback of an album
+* [ ] Show album songs
+* [ ] Divide album songs by LP sides
+* [ ] Stop playback when reaching the end of the LP side
+* [ ] Limit search results to actual LPs
+* [ ] Implement search pagination
+* [ ] Make the UI pretty
+* [ ] Make song seeking imprecise
+
+Things that I would like to add, but probably violate Spotify terms of use, so I need to ask permission first:
+
+* [ ] Emulate vinyl crackle
+* [ ] Prepend a few seconds of "vinyl silence" before starting playback when an album is selected or LP side is switched.
+* [ ] Append a few seconds of "vinyl silence" at the end of an LP side.
+* [ ] Show a picture of the LP spinning, they can be found on Internet Archive.
 
 ## Available Scripts
 
