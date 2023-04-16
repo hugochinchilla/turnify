@@ -12,7 +12,14 @@ export function Search({ token }: SearchProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const search = new SpotifySearchRepository(token);
-  search.search(query).then(setResults);
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      search.search(query).then(setResults);
+    }, 300);
+
+    return () => clearTimeout(getData);
+  }, [query]);
 
   return (
     <div>

@@ -15,9 +15,13 @@ export class SpotifySearchRepository {
   constructor(private accessToken: string) {}
 
   search(query: string): Promise<Array<SearchResult>> {
+    if (!query) {
+      return Promise.resolve([]);
+    }
+
     const args = new URLSearchParams({
       q: query,
-      type: "artist,album",
+      type: "album",
       market: "ES",
       limit: "10",
       offset: "0",
