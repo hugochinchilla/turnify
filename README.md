@@ -33,7 +33,27 @@ Things that I would like to add, but probably violate Spotify terms of use, so I
 * [ ] Emulate vinyl crackle
 * [ ] Prepend a few seconds of "vinyl silence" before starting playback when an album is selected or LP side is switched.
 * [ ] Append a few seconds of "vinyl silence" at the end of an LP side.
+  > Do not permit any device or system to segue, mix, re-mix, or overlap any Spotify Content with any other audio content (including other Spotify Content).
+  > 
+  > https://developer.spotify.com/policy
+
 * [ ] Show a picture of the LP spinning, they can be found on Internet Archive.
+  > Do not synchronize any sound recordings with any visual media, including any advertising, film, television program, slideshow, video, or similar content.
+  > 
+  > Do not create any product or service which is integrated with streams or content from another service.
+  > 
+  > https://developer.spotify.com/policy 
+
+
+## Before publishing the App
+
+* [ ] Comply with all spotify developer policy
+  * [ ] Create a privacy policy page
+  * [ ] Provide a way to disconnect spotify account form the application
+  * [ ] Show Spotiy logo somewhere 
+    > If you display any Spotify Content you must clearly attribute the content as being supplied and made available by Spotify, by using the Spotify Marks. Our Branding Guidelines include some examples of what you should and shouldn’t do.
+    >
+    > https://developer.spotify.com/policy 
 
 ## Available Scripts
 
