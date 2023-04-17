@@ -1,13 +1,13 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import App from './App';
-import { useAuthToken } from "../../turnify/hooks/useAuthToken";
+import React from "react";
+import { render } from "@testing-library/react";
+import App from "./App";
+import { getAccessToken } from "../../turnify/hooks/getAccessToken";
 
 jest.mock("../../turnify/hooks/useAuthToken");
 
-const mockedUseAuthToken = jest.mocked(useAuthToken);
+const mockedGetAccessToken = jest.mocked(getAccessToken);
 
-test('renders the app', () => {
-  mockedUseAuthToken.mockReturnValue({accessToken: 'someFakeToken'})
+test("renders the app", () => {
+  mockedGetAccessToken.mockResolvedValue("someFakeToken");
   render(<App />);
 });
