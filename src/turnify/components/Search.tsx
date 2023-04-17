@@ -1,37 +1,23 @@
 import { useEffect, useState } from "react";
-import {
-  SearchResult,
-  SpotifySearchRepository,
-} from "../../infrastructure/spotify/SpotifySearchRepository";
-import {
-  usePlayerDevice,
-  useSpotifyPlayer,
-} from "react-spotify-web-playback-sdk";
-import { SpotifyPlayerController } from "../../infrastructure/spotify/SpotifyPlayerController";
+import { SearchResult } from "../../infrastructure/spotify/SpotifySearchRepository";
+import { useAppContext } from "../contexts/AppContext";
 
-interface SearchProps {
-  token: string;
-}
-
-export function Search({ token }: SearchProps) {
+export function Search() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const search = new SpotifySearchRepository(token);
-  const device = usePlayerDevice();
-  const player = useSpotifyPlayer();
-  const control = new SpotifyPlayerController(token, device!, player!);
-
-  const startPlayback = (r: SearchResult) => {
-    control.startPlayback(r);
-  };
+  const { searchAlbum, searchResults, selectAlbum } = useAppContext();
 
   useEffect(() => {
     const getData = setTimeout(() => {
-      search.search(query).then(setResults);
+      searchAlbum(query);
     }, 300);
 
     return () => clearTimeout(getData);
   }, [query]);
+
+  function onAlbumSelected(album: SearchResult) {
+    selectAlbum(album);
+    setQuery("");
+  }
 
   return (
     <div>
@@ -42,12 +28,12 @@ export function Search({ token }: SearchProps) {
       />
 
       <div>
-        {results.map((r: SearchResult, index) => (
+        {searchResults.map((r: SearchResult, index) => (
           <img
             src={r.artwork}
             alt={r.title}
             key={index}
-            onClick={() => startPlayback(r)}
+            onClick={() => onAlbumSelected(r)}
           />
         ))}
       </div>

@@ -6,6 +6,7 @@ export enum ResultType {
 }
 
 export interface SearchResult {
+  id: string;
   title: string;
   artwork: string;
   type: ResultType;
@@ -41,6 +42,7 @@ export class SpotifySearchRepository {
       })
       .then((data) => {
         return data.albums.items.map((item: any) => ({
+          id: item.id,
           title: item.name,
           artwork: item.images[1].url,
           type: ResultType.ALBUM,
