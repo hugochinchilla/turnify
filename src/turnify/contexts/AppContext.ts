@@ -9,6 +9,7 @@ import {
 } from "../../infrastructure/spotify/SpotifySearchRepository";
 import { PlayerDevice } from "react-spotify-web-playback-sdk";
 import { SpotifyPlayerController } from "../../infrastructure/spotify/SpotifyPlayerController";
+import crackle from "../../assets/vinyl-crackle.mp3";
 
 export interface App {
   trackList: Track[];
@@ -17,6 +18,10 @@ export interface App {
   selectAlbum: (album: SearchResult) => void;
   searchAlbum: (query: string) => void;
 }
+
+const featureToggles = {
+  vinylHiss: true,
+};
 
 export const AppContext = React.createContext<App | null>(null);
 
@@ -28,6 +33,54 @@ export function useAppContext() {
   }
 
   return value;
+}
+
+function wait(time_ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time_ms);
+  });
+}
+
+function fadeOut(audio: HTMLAudioElement): Promise<void> {
+  let steps = 100;
+  const tick = 50;
+
+  return new Promise((resolve) => {
+    const stepDown = () => {
+      audio.volume = audio.volume * 0.98;
+      steps = steps - 1;
+
+      if (steps > 0) {
+        setTimeout(stepDown, tick);
+      } else {
+        resolve();
+      }
+    };
+
+    stepDown();
+  });
+}
+
+function startPlayback(control: SpotifyPlayerController, album: SearchResult) {
+  if (!featureToggles.vinylHiss) {
+    control.startPlayback(album);
+    return;
+  }
+
+  const audio = new Audio(crackle);
+
+  control
+    .stopPlayback()
+    .then(() => control.getPlayerVolume())
+    .then((volume) => (audio.volume = volume))
+    .then(() => audio.play())
+    .then(() => wait(3_000))
+    .then(() => control.startPlayback(album))
+    .then(() => wait(10_000))
+    .then(() => fadeOut(audio))
+    .then(() => audio.pause());
+
+  control.onPause(() => audio.pause());
 }
 
 export function useCreateAppContext(
@@ -45,9 +98,9 @@ export function useCreateAppContext(
 
   function selectAlbum(album: SearchResult) {
     setCurrentAlbum(album);
-    albumRepository.getAlbumTracks(album.id).then(setTrackList);
-    control.startPlayback(album);
     setSearchResults([]);
+    albumRepository.getAlbumTracks(album.id).then(setTrackList);
+    startPlayback(control, album);
   }
 
   function searchAlbum(query: string) {
