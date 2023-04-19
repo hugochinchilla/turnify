@@ -17,7 +17,7 @@ function forceValidAppUrl() {
 function getCodeVerifier(): string {
   let codeVerifier = localStorage.getItem("code-verifier");
   if (!codeVerifier) {
-    codeVerifier = spotifyAuth.createCodeVerifier();
+    codeVerifier = SpotifyAuthRepository.createCodeVerifier();
     localStorage.setItem("code-verifier", codeVerifier);
   }
 
@@ -27,7 +27,6 @@ function getCodeVerifier(): string {
 function invalidateCredentials(codeVerifier: string): void {
   localStorage.removeItem("access-token");
   localStorage.removeItem("refresh-token");
-  spotifyAuth.redirectToLoginPage(codeVerifier);
 }
 
 function refreshAccessToken(codeVerifier: string): Promise<string> {
@@ -59,6 +58,20 @@ function processLoginCallback(codeVerifier: string, code: string) {
   });
 }
 
+function goToSpotifyLoginPage(codeVerifier: string): void {
+  let redirectCount = parseInt(
+    localStorage.getItem("login-redirect-count") || "0"
+  );
+
+  if (redirectCount > 2) {
+    throw new Error("redirect loop detected");
+  }
+
+  redirectCount++;
+  localStorage.setItem("login-redirect-count", redirectCount.toString());
+  spotifyAuth.redirectToLoginPage(codeVerifier);
+}
+
 export function getAccessToken(): Promise<string> {
   forceValidAppUrl();
 
@@ -69,13 +82,13 @@ export function getAccessToken(): Promise<string> {
 
   if (!storedAccessToken) {
     if (code) {
-      processLoginCallback(codeVerifier, code).then(() => {
+      return processLoginCallback(codeVerifier, code).then(() => {
         window.location.assign(redirectUri);
-        throw new Error(REDIRECT_TO_MAIN_APP_URL);
+        return Promise.reject(new Error(REDIRECT_TO_MAIN_APP_URL));
       });
     }
-    spotifyAuth.redirectToLoginPage(codeVerifier);
-    throw new Error(REDIRECT_TO_LOGIN_PAGE);
+    goToSpotifyLoginPage(codeVerifier);
+    return Promise.reject(new Error(REDIRECT_TO_LOGIN_PAGE));
   }
 
   return validateAccessToken(storedAccessToken)
@@ -87,6 +100,7 @@ export function getAccessToken(): Promise<string> {
         return refreshAccessToken(codeVerifier);
       }
       invalidateCredentials(codeVerifier);
+      goToSpotifyLoginPage(codeVerifier);
       throw errorResponse;
     });
 }

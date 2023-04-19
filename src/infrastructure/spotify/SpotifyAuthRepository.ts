@@ -1,24 +1,8 @@
-import CryptoJS from "crypto-js";
 import { ErrorResponse } from "../http/ErrorResponse";
-
-function generateRandomString(length: number) {
-  let text = "";
-  let possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for (let i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-}
-
-async function generateCodeChallenge(codeVerifier: string) {
-  return CryptoJS.SHA256(codeVerifier)
-    .toString(CryptoJS.enc.Base64)
-    .replaceAll("+", "-")
-    .replaceAll("/", "_")
-    .replace(/=+$/, "");
-}
+import {
+  generateCodeChallenge,
+  generateRandomString,
+} from "../../turnify/crypto";
 
 function fetchAsFormEncoded(url: string, data: Record<string, string>) {
   let body = new URLSearchParams(data);
@@ -40,7 +24,7 @@ function fetchAsFormEncoded(url: string, data: Record<string, string>) {
 export class SpotifyAuthRepository {
   constructor(private clientId: string, private redirectUri: string) {}
 
-  createCodeVerifier(): string {
+  static createCodeVerifier(): string {
     return generateRandomString(128);
   }
 
