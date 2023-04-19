@@ -55,9 +55,7 @@ describe("getAccessToken", () => {
     jest.mocked(generateRandomString).mockReturnValueOnce(codeVerifier);
     jest.mocked(generateRandomString).mockReturnValueOnce(state);
 
-    await expect(getAccessToken).rejects.toThrow(
-      "Redirecting to Spotify login page"
-    );
+    await expect(getAccessToken()).resolves.toBeNull();
 
     expect(window.location.assign).toHaveBeenCalledTimes(1);
     expect(window.location.assign).toHaveBeenCalledWith(
@@ -80,8 +78,8 @@ describe("getAccessToken", () => {
       .mockImplementationOnce(() => firstCodeVerifier)
       .mockImplementationOnce(() => "otherCode");
 
-    await expect(getAccessToken).rejects.toThrow();
-    await expect(getAccessToken).rejects.toThrow();
+    await expect(getAccessToken()).resolves.toBeNull();
+    await expect(getAccessToken()).resolves.toBeNull();
 
     expect(window.location.assign).toHaveBeenCalledTimes(2);
     expect(window.location.assign).toHaveBeenCalledWith(
@@ -89,7 +87,7 @@ describe("getAccessToken", () => {
     );
   });
 
-  describe("receive access token from redirect", () => {
+  describe("request access token after login redirection", () => {
     const sampleSuccessResponse = {
       access_token: "the-access-token",
       refresh_token: "the-refresh-token",

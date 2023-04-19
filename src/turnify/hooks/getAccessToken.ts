@@ -1,7 +1,5 @@
 import { SpotifyAuthRepository } from "../../infrastructure/spotify/SpotifyAuthRepository";
 
-const REDIRECT_TO_LOGIN_PAGE = "Redirecting to Spotify login page";
-
 const clientId = "fd160f950e30436ebf69e14b9550cd0b";
 const redirectUri = "http://127.0.0.1:7878";
 const spotifyAuth = new SpotifyAuthRepository(clientId, redirectUri);
@@ -75,7 +73,7 @@ function goToSpotifyLoginPage(codeVerifier: string): void {
   spotifyAuth.redirectToLoginPage(codeVerifier);
 }
 
-export function getAccessToken(): Promise<string> {
+export function getAccessToken(): Promise<string | null> {
   forceValidAppUrl();
 
   const codeVerifier = getCodeVerifier();
@@ -91,7 +89,7 @@ export function getAccessToken(): Promise<string> {
       });
     }
     goToSpotifyLoginPage(codeVerifier);
-    return Promise.reject(new Error(REDIRECT_TO_LOGIN_PAGE));
+    return Promise.resolve(null);
   }
 
   return validateAccessToken(storedAccessToken)
