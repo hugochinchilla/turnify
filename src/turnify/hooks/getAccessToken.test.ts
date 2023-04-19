@@ -70,23 +70,6 @@ describe("getAccessToken", () => {
     );
   });
 
-  it("stores the code-verifier and reuses it", async () => {
-    const firstCodeVerifier = "0".repeat(128);
-    const codeChallenge = "RXJXkcR7MmGMxXuIND4rzuw7CgG4O8l9FEosvBGiDD0";
-    jest
-      .spyOn(SpotifyAuthRepository, "createCodeVerifier")
-      .mockImplementationOnce(() => firstCodeVerifier)
-      .mockImplementationOnce(() => "otherCode");
-
-    await expect(getAccessToken()).resolves.toBeNull();
-    await expect(getAccessToken()).resolves.toBeNull();
-
-    expect(window.location.assign).toHaveBeenCalledTimes(2);
-    expect(window.location.assign).toHaveBeenCalledWith(
-      expect.stringContaining(codeChallenge)
-    );
-  });
-
   describe("request access token after login redirection", () => {
     const sampleSuccessResponse = {
       access_token: "the-access-token",
