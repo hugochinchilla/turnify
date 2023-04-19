@@ -106,11 +106,6 @@ describe("getAccessToken", () => {
       jest
         .spyOn(SpotifyAuthRepository.prototype, "requestAccessToken")
         .mockImplementation(() => Promise.resolve(sampleSuccessResponse));
-      jest
-        .spyOn(SpotifyAuthRepository.prototype, "getProfile")
-        .mockImplementation(() => Promise.resolve());
-
-      await expect(getAccessToken).rejects.toThrow();
 
       await expect(getAccessToken()).resolves.toEqual(
         sampleSuccessResponse.access_token
@@ -121,10 +116,17 @@ describe("getAccessToken", () => {
       jest
         .spyOn(SpotifyAuthRepository.prototype, "requestAccessToken")
         .mockImplementation(() => Promise.resolve(sampleSuccessResponse));
+      jest.spyOn(window.history, "replaceState");
 
-      await expect(getAccessToken).rejects.toThrow();
+      await expect(getAccessToken()).resolves.toEqual(
+        sampleSuccessResponse.access_token
+      );
 
-      expect(window.location.assign).toHaveBeenCalledWith(REDIRECT_URI);
+      expect(window.history.replaceState).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        "/"
+      );
     });
   });
 });

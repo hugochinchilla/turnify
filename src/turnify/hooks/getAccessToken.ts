@@ -51,10 +51,14 @@ function validateAccessToken(accessToken: string) {
   return spotifyAuth.getProfile(accessToken);
 }
 
-function processLoginCallback(codeVerifier: string, code: string) {
+function processLoginCallback(
+  codeVerifier: string,
+  code: string
+): Promise<string> {
   return spotifyAuth.requestAccessToken(codeVerifier, code).then((response) => {
     localStorage.setItem("access-token", response.access_token);
     localStorage.setItem("refresh-token", response.refresh_token);
+    return response.access_token;
   });
 }
 
@@ -82,9 +86,9 @@ export function getAccessToken(): Promise<string> {
 
   if (!storedAccessToken) {
     if (code) {
-      return processLoginCallback(codeVerifier, code).then(() => {
-        window.location.assign(redirectUri);
-        return Promise.reject(new Error(REDIRECT_TO_MAIN_APP_URL));
+      return processLoginCallback(codeVerifier, code).then((token) => {
+        window.history.replaceState({}, document.title, "/");
+        return Promise.resolve(token);
       });
     }
     goToSpotifyLoginPage(codeVerifier);
