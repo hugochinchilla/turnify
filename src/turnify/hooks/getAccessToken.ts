@@ -85,6 +85,7 @@ export function getAccessToken(): Promise<string | null> {
     if (code) {
       return processLoginCallback(codeVerifier, code).then((token) => {
         window.history.replaceState({}, document.title, "/");
+        localStorage.removeItem("login-redirect-count");
         return Promise.resolve(token);
       });
     }
