@@ -14,6 +14,7 @@
     "@types/react-dom": "^18.0.11",
     "crypto-js": "^4.1.1",
     "daisyui": "^2.51.5",
+    "husky": "^8.0.3",
     "jest-fail-on-console": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,7 +28,8 @@
   "scripts": {
     "start": "PORT=7878 react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll=false",
+    "test:watch": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -51,5 +53,10 @@
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "prettier": "2.8.7"
+  },
+  "lint-staged": {
+    "*": [
+      "npm test"
+    ]
   }
 }

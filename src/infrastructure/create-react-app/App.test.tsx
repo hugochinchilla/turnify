@@ -2,12 +2,17 @@ import React from "react";
 import { render } from "@testing-library/react";
 import App from "./App";
 import { getAccessToken } from "../../turnify/hooks/getAccessToken";
-
-jest.mock("../../turnify/hooks/useAuthToken");
-
-const mockedGetAccessToken = jest.mocked(getAccessToken);
+import { SpotifyAuthRepository } from "../spotify/SpotifyAuthRepository";
 
 test("renders the app", () => {
-  mockedGetAccessToken.mockResolvedValue("someFakeToken");
+  jest
+    .spyOn(SpotifyAuthRepository.prototype, "requestAccessToken")
+    .mockImplementation(() =>
+      Promise.resolve({
+        access_token: "the-access-token",
+        refresh_token: "the-refresh-token",
+      })
+    );
+
   render(<App />);
 });
