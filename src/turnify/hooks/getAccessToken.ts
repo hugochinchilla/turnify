@@ -93,6 +93,7 @@ export function getAccessToken(): Promise<string> {
 
   return validateAccessToken(storedAccessToken)
     .then(() => {
+      localStorage.removeItem("login-redirect-count");
       return storedAccessToken;
     })
     .catch((errorResponse) => {
