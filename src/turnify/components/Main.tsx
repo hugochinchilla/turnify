@@ -13,7 +13,7 @@ function Turnify() {
   return (
     <div className="Turnify">
       <div className="self-start navbar bg-base-100 flex justify-between">
-        <a className="btn btn-ghost normal-case text-xl">
+        <a className="btn btn-ghost normal-case text-xl" href="/">
           <img src={logo} alt="" className={"pr-2"} />
           Turnify
         </a>

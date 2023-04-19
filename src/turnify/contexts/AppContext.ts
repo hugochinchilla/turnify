@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   SpotifyAlbumRepository,
   Track,
@@ -92,7 +92,6 @@ export function useCreateAppContext(
 ) {
   const albumRepository = new SpotifyAlbumRepository(token);
   const control = new SpotifyPlayerController(token, device!, player!);
-  const search = new SpotifySearchRepository(token);
 
   const [trackList, setTrackList] = useState<Track[]>([]);
   const [currentAlbum, setCurrentAlbum] = useState<null | SearchResult>(null);
@@ -107,9 +106,13 @@ export function useCreateAppContext(
     startPlayback(control, album);
   }
 
-  function searchAlbum(query: string) {
-    search.search(query).then(setSearchResults);
-  }
+  const searchAlbum = useCallback(
+    (query: string) => {
+      const search = new SpotifySearchRepository(token);
+      search.search(query).then(setSearchResults);
+    },
+    [token]
+  );
 
   useEffect(() => {
     const getData = setTimeout(() => {
@@ -117,7 +120,7 @@ export function useCreateAppContext(
     }, 300);
 
     return () => clearTimeout(getData);
-  }, [searchQuery]);
+  }, [searchQuery, searchAlbum]);
 
   return {
     searchQuery,
