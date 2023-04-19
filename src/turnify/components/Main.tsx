@@ -6,13 +6,17 @@ import { TrackList } from "./TrackList";
 import { AppContextProvider } from "./AppContextProvider";
 import { useAppContext } from "../contexts/AppContext";
 import { getAccessToken } from "../hooks/getAccessToken";
+import logo from "../../assets/logo.svg";
 
 function Turnify() {
   const { searchResults } = useAppContext();
   return (
     <div className="Turnify">
       <div className="self-start navbar bg-base-100 flex justify-between">
-        <a className="btn btn-ghost normal-case text-xl">Turnify</a>
+        <a className="btn btn-ghost normal-case text-xl">
+          <img src={logo} alt="" className={"pr-2"} />
+          Turnify
+        </a>
         <Search />
       </div>
 
