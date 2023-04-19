@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SpotifyAlbumRepository,
   Track,
@@ -12,6 +12,8 @@ import { SpotifyPlayerController } from "../../infrastructure/spotify/SpotifyPla
 import crackle from "../../assets/vinyl-crackle.mp3";
 
 export interface App {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   trackList: Track[];
   currentAlbum: SearchResult | null;
   searchResults: SearchResult[];
@@ -95,10 +97,12 @@ export function useCreateAppContext(
   const [trackList, setTrackList] = useState<Track[]>([]);
   const [currentAlbum, setCurrentAlbum] = useState<null | SearchResult>(null);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   function selectAlbum(album: SearchResult) {
     setCurrentAlbum(album);
     setSearchResults([]);
+    setSearchQuery("");
     albumRepository.getAlbumTracks(album.id).then(setTrackList);
     startPlayback(control, album);
   }
@@ -107,7 +111,17 @@ export function useCreateAppContext(
     search.search(query).then(setSearchResults);
   }
 
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      searchAlbum(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(getData);
+  }, [searchQuery]);
+
   return {
+    searchQuery,
+    setSearchQuery,
     trackList,
     currentAlbum,
     searchResults,
