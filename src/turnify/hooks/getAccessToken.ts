@@ -1,7 +1,6 @@
 import { SpotifyAuthRepository } from "../../infrastructure/spotify/SpotifyAuthRepository";
 
 const REDIRECT_TO_LOGIN_PAGE = "Redirecting to Spotify login page";
-const REDIRECT_TO_MAIN_APP_URL = "Redirecting to home page";
 
 const clientId = "fd160f950e30436ebf69e14b9550cd0b";
 const redirectUri = "http://127.0.0.1:7878";
