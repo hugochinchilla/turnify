@@ -1,6 +1,7 @@
 import { getAccessToken } from "./getAccessToken";
 import { generateRandomString } from "../crypto";
 import { SpotifyAuthRepository } from "../../infrastructure/spotify/SpotifyAuthRepository";
+import { ErrorResponse } from "../../infrastructure/http/ErrorResponse";
 
 jest.mock("../crypto", () => ({
   ...jest.requireActual("../crypto"),
@@ -108,6 +109,76 @@ describe("getAccessToken", () => {
         expect.anything(),
         "/"
       );
+    });
+  });
+
+  describe("for a stored access-token", () => {
+    const THE_TOKEN = "abcd-1234";
+    const REFRESH_TOKEN = "refresh-1234";
+
+    beforeEach(() => {
+      localStorage.setItem("access-token", THE_TOKEN);
+      localStorage.setItem("refresh-token", REFRESH_TOKEN);
+    });
+
+    it("returns the access token after valdiation", async () => {
+      jest
+        .spyOn(SpotifyAuthRepository.prototype, "getProfile")
+        .mockResolvedValue({});
+
+      await expect(getAccessToken()).resolves.toEqual(THE_TOKEN);
+    });
+
+    it("refreshes the access token if expired", async () => {
+      const errorResponse = new Response("", { status: 401 });
+      jest
+        .spyOn(SpotifyAuthRepository.prototype, "getProfile")
+        .mockRejectedValue(new ErrorResponse("", errorResponse));
+      const refreshToken = jest
+        .spyOn(SpotifyAuthRepository.prototype, "refreshAccessToken")
+        .mockResolvedValue({
+          access_token: "refreshed-token",
+          refresh_token: "new-refresh-token",
+        });
+
+      await expect(getAccessToken()).resolves.toEqual("refreshed-token");
+      expect(refreshToken).toHaveBeenCalledWith(REFRESH_TOKEN);
+    });
+
+    describe("on token refresh failure", () => {
+      it("clears access-token and refresh-token from storage", async () => {
+        const invalidToken = new Response("", { status: 401 });
+        const invalidRefreshToken = new Response("", { status: 400 });
+        jest
+          .spyOn(SpotifyAuthRepository.prototype, "getProfile")
+          .mockRejectedValue(new ErrorResponse("", invalidToken));
+        jest
+          .spyOn(SpotifyAuthRepository.prototype, "refreshAccessToken")
+          .mockRejectedValue(new ErrorResponse("", invalidRefreshToken));
+
+        await expect(getAccessToken()).resolves.toBeNull();
+
+        expect(localStorage.getItem("access-token")).toBeNull();
+        expect(localStorage.getItem("refresh-token")).toBeNull();
+      });
+
+      it("redirects to login page", async () => {
+        const invalidToken = new Response("", { status: 401 });
+        const invalidRefreshToken = new Response("", { status: 400 });
+        jest
+          .spyOn(SpotifyAuthRepository.prototype, "getProfile")
+          .mockRejectedValue(new ErrorResponse("", invalidToken));
+        jest
+          .spyOn(SpotifyAuthRepository.prototype, "refreshAccessToken")
+          .mockRejectedValue(new ErrorResponse("", invalidRefreshToken));
+
+        await expect(getAccessToken()).resolves.toBeNull();
+
+        expect(window.location.assign).toHaveBeenCalledTimes(1);
+        expect(window.location.assign).toHaveBeenCalledWith(
+          expect.stringMatching("https://accounts.spotify.com/authorize")
+        );
+      });
     });
   });
 });
