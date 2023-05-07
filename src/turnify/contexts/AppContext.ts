@@ -1,15 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  SpotifyAlbumRepository,
-  Track,
-} from "../../infrastructure/spotify/SpotifyAlbumRepository";
-import {
-  SearchResult,
-  SpotifySearchRepository,
-} from "../../infrastructure/spotify/SpotifySearchRepository";
+import { SpotifyAlbumRepository } from "../../infrastructure/spotify/SpotifyAlbumRepository";
+import { SpotifySearchRepository } from "../../infrastructure/spotify/SpotifySearchRepository";
 import { PlayerDevice } from "react-spotify-web-playback-sdk";
 import { SpotifyPlayerController } from "../../infrastructure/spotify/SpotifyPlayerController";
 import crackle from "../../assets/vinyl-crackle.mp3";
+import { Track } from "../entities/Track";
+import { SearchResult } from "../entities/SearchResult";
 
 export interface App {
   searchQuery: string;

@@ -1,5 +1,5 @@
-import { SearchResult } from "../../infrastructure/spotify/SpotifySearchRepository";
 import { useAppContext } from "../contexts/AppContext";
+import { SearchResult } from "../entities/SearchResult";
 
 export function Search() {
   const { searchQuery, setSearchQuery } = useAppContext();

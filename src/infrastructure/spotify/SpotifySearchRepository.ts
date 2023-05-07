@@ -1,17 +1,5 @@
 import { ErrorResponse } from "../http/ErrorResponse";
-
-export enum ResultType {
-  ALBUM,
-  ARTIST,
-}
-
-export interface SearchResult {
-  id: string;
-  title: string;
-  artwork: string;
-  type: ResultType;
-  uri: string;
-}
+import { SearchResult } from "../../turnify/entities/SearchResult";
 
 export class SpotifySearchRepository {
   constructor(private accessToken: string) {}
@@ -45,7 +33,6 @@ export class SpotifySearchRepository {
           id: item.id,
           title: item.name,
           artwork: item.images[1].url,
-          type: ResultType.ALBUM,
           uri: item.uri,
         }));
       });

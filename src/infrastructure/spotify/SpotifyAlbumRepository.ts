@@ -1,12 +1,5 @@
 import { ErrorResponse } from "../http/ErrorResponse";
-
-export interface Track {
-  title: string;
-  durationSeconds: number;
-  trackNumber: number;
-  isPlayable: boolean;
-  uri: string;
-}
+import { Track } from "../../turnify/entities/Track";
 
 export class SpotifyAlbumRepository {
   constructor(private accessToken: string) {}

@@ -1,5 +1,5 @@
 import { PlayerDevice } from "react-spotify-web-playback-sdk";
-import { SearchResult } from "./SpotifySearchRepository";
+import { SearchResult } from "../../turnify/entities/SearchResult";
 
 export class SpotifyPlayerController {
   constructor(
