@@ -20,6 +20,7 @@ jobs:
       - run: npm ci
       - run: npm run test
   docker:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
