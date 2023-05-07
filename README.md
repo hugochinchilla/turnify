@@ -20,7 +20,7 @@ This is in a very basic state, you will be able to search albums and play them, 
 
 * [x] Search albums
 * [x] Start playback of an album
-* [ ] Show album songs
+* [x] Show album songs
 * [ ] Divide album songs by LP sides
 * [ ] Stop playback when reaching the end of the LP side
 * [ ] Limit search results to actual LPs
